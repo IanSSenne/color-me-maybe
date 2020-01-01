@@ -1,0 +1,19 @@
+{
+  "name": "color-me-maybe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib.es6.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:docs": "jsdoc.cmd -d ./docs ./"
+  },
+  "keywords": [
+    "color",
+    "browser-only"
+  ],
+  "author": "Ian Senne",
+  "license": "ISC"
+}
