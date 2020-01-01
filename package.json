@@ -1,7 +1,7 @@
 {
   "name": "color-me-maybe",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.3",
+  "description": "color functions for js",
   "main": "lib.es6.js",
   "repository": {
     "url": "https://github.com/IanSSenne/color-me-maybe"
