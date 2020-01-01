@@ -11,12 +11,15 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:docs": "jsdoc.cmd -d ./docs ./"
+    "build:docs": "jsdoc -d ./docs ./"
   },
   "keywords": [
     "color",
     "browser-only"
   ],
   "author": "Ian Senne",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "jsdoc": "^3.6.3"
+  }
 }
