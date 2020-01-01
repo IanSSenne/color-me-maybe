@@ -348,4 +348,3 @@ class Color {
     }
 }
 export default Color;
-console.log(window.Color = Color);

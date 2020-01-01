@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "lib.es6.js",
+  "repository": {
+    "url": "https://github.com/IanSSenne/color-me-maybe"
+  },
   "directories": {
     "doc": "docs"
   },
