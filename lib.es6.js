@@ -645,4 +645,3 @@ class Color {
     }
 }
 export default Color;
-window.Color = Color;
