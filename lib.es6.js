@@ -387,7 +387,7 @@ class Color {
         } else {
             [, r, g, b, a] = Util.deHex(hexStr.match(/#([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])*/i));
             if (Number.isNaN(a)) a = COL_RGBMax;
-            return new Color(r, g, b, a);
+            return new Color(r, g, b, a / 255);
         }
     }
     /**
