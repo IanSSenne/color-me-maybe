@@ -1,6 +1,6 @@
 {
   "name": "color-me-maybe",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "color functions for js",
   "main": "lib.es6.js",
   "repository": {
@@ -14,8 +14,7 @@
     "build:docs": "jsdoc -d ./docs ./"
   },
   "keywords": [
-    "color",
-    "browser-only"
+    "color"
   ],
   "author": "Ian Senne",
   "license": "ISC",

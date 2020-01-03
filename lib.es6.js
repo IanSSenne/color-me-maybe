@@ -293,95 +293,23 @@ const colors = new Map([
         [255, 255, 0]],
     ["yellowgreen",
         [154, 205, 50]]]);
-function hsltorgb(H, S, L) {//from https://github.com/CodeDrome/hslrgb-conversions-javascript/blob/master/rgbhsl.js
-    let color = { R: 0, G: 0, B: 0 };
-
-    if (H == -1.0 && S == -1.0) {
-        color.R = L * 255.0;
-        color.G = L * 255.0;
-        color.B = L * 255.0;
-    }
-    else {
-        let temporary_1;
-
-        if (L < 0.5)
-            temporary_1 = L * (1.0 + S);
-        else
-            temporary_1 = L + S - L * S;
-
-        let temporary_2;
-
-        temporary_2 = 2.0 * L - temporary_1;
-
-        let hue = H / 360.0;
-
-        let temporary_R = hue + 0.333;
-        let temporary_G = hue;
-        let temporary_B = hue - 0.333;
-
-        if (temporary_R < 0.0)
-            temporary_R += 1.0;
-        if (temporary_R > 1.0)
-            temporary_R -= 1.0;
-
-        if (temporary_G < 0.0)
-            temporary_G += 1.0;
-        if (temporary_G > 1.0)
-            temporary_G -= 1.0;
-
-        if (temporary_B < 0.0)
-            temporary_B += 1.0;
-        if (temporary_B > 1.0)
-            temporary_B -= 1.0;
-
-        // RED
-        if ((6.0 * temporary_R) < 1.0) {
-            color.R = (temporary_2 + (temporary_1 - temporary_2) * 6.0 * temporary_R) * 255.0;
-        }
-        else if ((2.0 * temporary_R) < 1.0) {
-            color.R = temporary_1 * 255.0;
-        }
-        else if ((3.0 * temporary_R) < 2.0) {
-            color.R = (temporary_2 + (temporary_1 - temporary_2) * (0.666 - temporary_R) * 6.0) * 255.0;
-        }
-        else {
-            color.R = temporary_2 * 255.0;
-        }
-
-        // GREEN
-        if ((6.0 * temporary_G) < 1.0) {
-            color.G = (temporary_2 + (temporary_1 - temporary_2) * 6.0 * temporary_G) * 255.0;
-        }
-        else if ((2.0 * temporary_G) < 1.0) {
-            color.G = temporary_1 * 255.0;
-        }
-        else if ((3.0 * temporary_G) < 2.0) {
-            color.G = (temporary_2 + (temporary_1 - temporary_2) * (0.666 - temporary_G) * 6.0) * 255.0;
-        }
-        else {
-            color.G = temporary_2 * 255.0;
-        }
-
-        // BLUE
-        if ((6.0 * temporary_B) < 1.0) {
-            color.B = (temporary_2 + (temporary_1 - temporary_2) * 6.0 * temporary_B) * 255.0;
-        }
-        else if ((2.0 * temporary_B) < 1.0) {
-            color.B = temporary_1 * 255.0;
-        }
-        else if ((3.0 * temporary_B) < 2.0) {
-            color.B = (temporary_2 + (temporary_1 - temporary_2) * (0.666 - temporary_B) * 6.0) * 255.0;
-        }
-        else {
-            color.B = temporary_2 * 255.0;
-        }
-    }
-
-    color.R = Math.round(Math.abs(color.R));
-    color.G = Math.round(Math.abs(color.G));
-    color.B = Math.round(Math.abs(color.B));
-
-    return color;
+function hsltorgb(h, s, l) {//https://gist.github.com/vahidk/05184faf3d92a0aa1b46aeaa93b07786
+    let c = (1 - Math.abs(2 * l - 1)) * s;
+    let hp = h / 60.0;
+    let x = c * (1 - Math.abs((hp % 2) - 1));
+    let rgb1;
+    if (isNaN(h)) rgb1 = [0, 0, 0];
+    else if (hp <= 1) rgb1 = [c, x, 0];
+    else if (hp <= 2) rgb1 = [x, c, 0];
+    else if (hp <= 3) rgb1 = [0, c, x];
+    else if (hp <= 4) rgb1 = [0, x, c];
+    else if (hp <= 5) rgb1 = [x, 0, c];
+    else if (hp <= 6) rgb1 = [c, 0, x];
+    let m = l - c * 0.5;
+    return [
+        Math.round(255 * (rgb1[0] + m)),
+        Math.round(255 * (rgb1[1] + m)),
+        Math.round(255 * (rgb1[2] + m))];
 }
 const Util = {
     deHex(arr) {
@@ -498,7 +426,7 @@ class Color {
             [, h, s, l, a] = hslStr.match(/hsl\((\d+),(\d+)\%,(\d+)\%\)/i);
         }
         if (Number.isNaN(a) || a === undefined) a = 1;
-        const { R, G, B } = hsltorgb(+h, +s / 100, +l / 100);
+        const [R, G, B] = hsltorgb(+h, +s / 100, +l / 100);
         return new Color(R, G, B, a);
     }
     /**
@@ -717,5 +645,4 @@ class Color {
     }
 }
 export default Color;
-
 window.Color = Color;

@@ -1,4 +1,32 @@
-exports = {};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>exports = {};
 exports = ((exports) => {
     const colors = new Map([
         ["aliceblue",
@@ -295,23 +323,95 @@ exports = ((exports) => {
             [255, 255, 0]],
         ["yellowgreen",
             [154, 205, 50]]]);
-    function hsltorgb(h, s, l) {//https://gist.github.com/vahidk/05184faf3d92a0aa1b46aeaa93b07786
-        let c = (1 - Math.abs(2 * l - 1)) * s;
-        let hp = h / 60.0;
-        let x = c * (1 - Math.abs((hp % 2) - 1));
-        let rgb1;
-        if (isNaN(h)) rgb1 = [0, 0, 0];
-        else if (hp <= 1) rgb1 = [c, x, 0];
-        else if (hp <= 2) rgb1 = [x, c, 0];
-        else if (hp <= 3) rgb1 = [0, c, x];
-        else if (hp <= 4) rgb1 = [0, x, c];
-        else if (hp <= 5) rgb1 = [x, 0, c];
-        else if (hp <= 6) rgb1 = [c, 0, x];
-        let m = l - c * 0.5;
-        return [
-            Math.round(255 * (rgb1[0] + m)),
-            Math.round(255 * (rgb1[1] + m)),
-            Math.round(255 * (rgb1[2] + m))];
+    function hsltorgb(H, S, L) {//from https://github.com/CodeDrome/hslrgb-conversions-javascript/blob/master/rgbhsl.js
+        let color = { R: 0, G: 0, B: 0 };
+
+        if (H == -1.0 &amp;&amp; S == -1.0) {
+            color.R = L * 255.0;
+            color.G = L * 255.0;
+            color.B = L * 255.0;
+        }
+        else {
+            let temporary_1;
+
+            if (L &lt; 0.5)
+                temporary_1 = L * (1.0 + S);
+            else
+                temporary_1 = L + S - L * S;
+
+            let temporary_2;
+
+            temporary_2 = 2.0 * L - temporary_1;
+
+            let hue = H / 360.0;
+
+            let temporary_R = hue + 0.333;
+            let temporary_G = hue;
+            let temporary_B = hue - 0.333;
+
+            if (temporary_R &lt; 0.0)
+                temporary_R += 1.0;
+            if (temporary_R > 1.0)
+                temporary_R -= 1.0;
+
+            if (temporary_G &lt; 0.0)
+                temporary_G += 1.0;
+            if (temporary_G > 1.0)
+                temporary_G -= 1.0;
+
+            if (temporary_B &lt; 0.0)
+                temporary_B += 1.0;
+            if (temporary_B > 1.0)
+                temporary_B -= 1.0;
+
+            // RED
+            if ((6.0 * temporary_R) &lt; 1.0) {
+                color.R = (temporary_2 + (temporary_1 - temporary_2) * 6.0 * temporary_R) * 255.0;
+            }
+            else if ((2.0 * temporary_R) &lt; 1.0) {
+                color.R = temporary_1 * 255.0;
+            }
+            else if ((3.0 * temporary_R) &lt; 2.0) {
+                color.R = (temporary_2 + (temporary_1 - temporary_2) * (0.666 - temporary_R) * 6.0) * 255.0;
+            }
+            else {
+                color.R = temporary_2 * 255.0;
+            }
+
+            // GREEN
+            if ((6.0 * temporary_G) &lt; 1.0) {
+                color.G = (temporary_2 + (temporary_1 - temporary_2) * 6.0 * temporary_G) * 255.0;
+            }
+            else if ((2.0 * temporary_G) &lt; 1.0) {
+                color.G = temporary_1 * 255.0;
+            }
+            else if ((3.0 * temporary_G) &lt; 2.0) {
+                color.G = (temporary_2 + (temporary_1 - temporary_2) * (0.666 - temporary_G) * 6.0) * 255.0;
+            }
+            else {
+                color.G = temporary_2 * 255.0;
+            }
+
+            // BLUE
+            if ((6.0 * temporary_B) &lt; 1.0) {
+                color.B = (temporary_2 + (temporary_1 - temporary_2) * 6.0 * temporary_B) * 255.0;
+            }
+            else if ((2.0 * temporary_B) &lt; 1.0) {
+                color.B = temporary_1 * 255.0;
+            }
+            else if ((3.0 * temporary_B) &lt; 2.0) {
+                color.B = (temporary_2 + (temporary_1 - temporary_2) * (0.666 - temporary_B) * 6.0) * 255.0;
+            }
+            else {
+                color.B = temporary_2 * 255.0;
+            }
+        }
+
+        color.R = Math.round(Math.abs(color.R));
+        color.G = Math.round(Math.abs(color.G));
+        color.B = Math.round(Math.abs(color.B));
+
+        return color;
     }
     const Util = {
         deHex(arr) {
@@ -382,7 +482,7 @@ exports = ((exports) => {
         static fromHex(hexStr) {
             hexStr = hexStr.replace(/\s/g, '');
             let [r, g, b, a] = [0, 0, 0, 0];
-            if (hexStr.length < 6) {
+            if (hexStr.length &lt; 6) {
                 [, r, g, b, a] = Util.deHex(hexStr.match(/#([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])*/i));
                 if (Number.isNaN(a)) a = COL_Interval;
                 return new Color(r * 16, g * 16, b * 16, a * 16);
@@ -428,7 +528,7 @@ exports = ((exports) => {
                 [, h, s, l, a] = hslStr.match(/hsl\((\d+),(\d+)\%,(\d+)\%\)/i);
             }
             if (Number.isNaN(a) || a === undefined) a = 1;
-            const [R, G, B] = hsltorgb(+h, +s / 100, +l / 100);
+            const { R, G, B } = hsltorgb(+h, +s / 100, +l / 100);
             return new Color(R, G, B, a);
         }
         /**
@@ -647,5 +747,26 @@ exports = ((exports) => {
         }
     }
     exports.Color = Color;
-    return exports;
-})(exports).Color;
+})(exports).Color;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Color.html">Color</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Jan 02 2020 16:41:40 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
