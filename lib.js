@@ -293,6 +293,20 @@ const colors = new Map([
         [255, 255, 0]],
     ["yellowgreen",
         [154, 205, 50]]]);
+function rgbToHsl(r, g, b) {//https://gist.github.com/vahidk/05184faf3d92a0aa1b46aeaa93b07786
+    r /= 255; g /= 255; b /= 255;
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
+    let d = max - min;
+    let h;
+    if (d === 0) h = 0;
+    else if (max === r) h = (g - b) / d % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else if (max === b) h = (r - g) / d + 4;
+    let l = (min + max) / 2;
+    let s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+    return [h * 60, s, l];
+}
 function hsltorgb(h, s, l) {//https://gist.github.com/vahidk/05184faf3d92a0aa1b46aeaa93b07786
     let c = (1 - Math.abs(2 * l - 1)) * s;
     let hp = h / 60.0;
@@ -352,7 +366,7 @@ class Color {
     }
     /**
      * takes a genaric color string and will try to determine the best parsing method for it, takes any color format.
-     * 
+     *
      * @static
      * @param {string} colStr
      * @returns {Color}
@@ -560,7 +574,9 @@ class Color {
      * @memberof Color
      */
     darken(percent) {
-        return this.luminance(-percent);
+        const [H, S, L] = rgbToHsl(this._r, this._g, this._b)
+        const [R, G, B] = hsltorgb(H, S, L - ((L / 100) * percent) );
+        return new Color( R, G, B, this._a)
     }
     /**
      * makes the color n lighter
@@ -570,7 +586,9 @@ class Color {
      * @memberof Color
      */
     lighten(percent) {
-        return this.luminance(percent);//alias for luminance;
+        const [H, S, L] = rgbToHsl(this._r, this._g, this._b);
+        const [R, G, B] = hsltorgb(H, S, L + ( ((1-L)/100) * percent ) );
+        return new Color( R, G, B, this._a);
     }
     /**
      * makes the current color grayscale
@@ -631,4 +649,4 @@ class Color {
         return this._a;
     }
 }
-exports = Color;
+module.exports = Color;
