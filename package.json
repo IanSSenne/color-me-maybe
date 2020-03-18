@@ -1,6 +1,6 @@
 {
   "name": "color-me-maybe",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "description": "color functions for js",
   "main": "lib.js",
   "repository": {

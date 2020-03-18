@@ -364,8 +364,9 @@ class Color {
             this._a = Util.clamp(+a, 0, 1);
         }
     }
+
     /**
-     * takes a genaric color string and will try to determine the best parsing method for it, takes any color format.
+     * takes a generic color string and will try to determine the best parsing method for it, takes any color format.
      *
      * @static
      * @param {string} colStr
@@ -373,7 +374,7 @@ class Color {
      * @memberof Color
      */
     static fromString(colStr) {
-        if (/#[0-9A-F]{3,4}|#[0-9A-F]{6}|#[0-9A-F]{8}/.test(colStr)) {
+        if (/#[0-9A-F]{3,4}|#[0-9A-F]{6}|#[0-9A-F]{8}/i.test(colStr)) {
             return Color.fromHex(colStr);
         } else if (/rgb/.test(colStr)) {
             return Color.fromRGB(colStr);
@@ -381,6 +382,39 @@ class Color {
             return Color.fromHSL(colStr);
         } else {
             return Color.fromColorString(colStr);
+        }
+    }
+    /**
+     * takes a generic color string and will try to determine the color format.
+     *
+     * @static
+     * @param {string} colStr
+     * @returns {Color}
+     * @memberof Color
+     */
+    static getType(colStr) {
+        if (/#[0-9A-F]{3,4}|#[0-9A-F]{6}|#[0-9A-F]{8}/i.test(colStr)) {
+            return Color.Types.HEX
+        } else if (/rgb/.test(colStr)) {
+            return Color.Types.RGB
+        } else if (/hsl/.test(colStr)) {
+            return Color.Types.HSL
+        } else if (colors.has(colStr)) {
+            return Color.Types.CSS_STRING
+        } else {
+            return Color.Types.UNKNOWN_OR_INVALID
+        }
+    }
+    /**
+     * object containing color type strings
+     */
+    static get Types() {
+        return {
+            HEX: "HEX",
+            RGB: "RGB",
+            HSL: "HSL",
+            CSS_STRING: "CSS_COLOR_STRING",
+            UNKNOWN_OR_INVALID: null
         }
     }
     /**
@@ -404,6 +438,7 @@ class Color {
             return new Color(r, g, b, a / 255);
         }
     }
+
     /**
      * takes an RGB string in the format of rgb(R,G,B) or rgba(R,G,B,A)
      *
@@ -423,6 +458,7 @@ class Color {
         if (Number.isNaN(a) || a === undefined) a = 1;
         return new Color(r, g, b, a);
     }
+
     /**
      * takes and HSL value in the format of hsl(H,S%,L%) or hsla(H,S%,L%,A)
      *
@@ -443,6 +479,7 @@ class Color {
         const [R, G, B] = hsltorgb(+h, +s / 100, +l / 100);
         return new Color(R, G, B, a);
     }
+
     /**
      * takes a css color string and returns a Color instance.
      *
@@ -459,6 +496,7 @@ class Color {
             throw new Error("unable to find color " + colStr);
         }
     }
+
     /**
      * RANDOM!!!! returns a random color
      *
@@ -496,6 +534,7 @@ class Color {
                 }
         }
     }
+
     /**
      * modify the red value into a new instance
      *
@@ -506,6 +545,7 @@ class Color {
     r(value) {
         return new Color(value, this._g, this._b, this._a);
     }
+
     /**
      * modify the green value into a new instance
      *
@@ -516,6 +556,7 @@ class Color {
     g(value) {
         return new Color(this._r, value, this._b, this._a);
     }
+
     /**
      * modify the blue value into a new instance
      *
@@ -526,6 +567,7 @@ class Color {
     b(value) {
         return new Color(this._r, this._g, value, this._a);
     }
+
     /**
      * modify the alpha value into a new instance
      *
@@ -536,6 +578,7 @@ class Color {
     a(value) {
         return new Color(this._r, this._g, this._b, value);
     }
+
     /**
      * get the color between 2 colors with a given percentage.
      *
@@ -551,6 +594,7 @@ class Color {
             Util.lerpNumber(this._b, other._b, percent),
             Util.lerpNumber(this._r, other._a, percent))
     }
+
     /**
      * luminance of the value in a new color instance
      *
@@ -566,6 +610,7 @@ class Color {
             this._a
         );
     }
+
     /**
      * makes the color n% darker
      *
@@ -575,9 +620,10 @@ class Color {
      */
     darken(percent) {
         const [H, S, L] = rgbToHsl(this._r, this._g, this._b)
-        const [R, G, B] = hsltorgb(H, S, L - ((L / 100) * percent) );
-        return new Color( R, G, B, this._a)
+        const [R, G, B] = hsltorgb(H, S, L - ((L / 100) * percent));
+        return new Color(R, G, B, this._a)
     }
+
     /**
      * makes the color n lighter
      *
@@ -587,9 +633,10 @@ class Color {
      */
     lighten(percent) {
         const [H, S, L] = rgbToHsl(this._r, this._g, this._b);
-        const [R, G, B] = hsltorgb(H, S, L + ( ((1-L)/100) * percent ) );
-        return new Color( R, G, B, this._a);
+        const [R, G, B] = hsltorgb(H, S, L + (((1 - L) / 100) * percent));
+        return new Color(R, G, B, this._a);
     }
+
     /**
      * makes the current color grayscale
      *
@@ -600,6 +647,7 @@ class Color {
         let avg = (this._r + this._b + this._g) / 3;
         return new Color(avg, avg, avg, this._a);
     }
+
     /**
      * inverts the color
      *
@@ -621,6 +669,7 @@ class Color {
     red() {
         return this._r;
     }
+
     /**
      * returns the green value of the color instance
      *
@@ -630,6 +679,7 @@ class Color {
     green() {
         return this._g;
     }
+
     /**
      * returns the blue value of the color instance
      *
@@ -639,6 +689,7 @@ class Color {
     blue() {
         return this._b;
     }
+
     /**
      * returns the alpha value of the color instance
      *
@@ -647,6 +698,17 @@ class Color {
      */
     alpha() {
         return this._a;
+    }
+
+    /**
+     * returns a boolean if the value is a valid hex string
+     *
+     * @returns {Boolean}
+     * @param {String} color the color to check
+     * @memberof Color
+     */
+    isHex(color) {
+        return color.match(hex);
     }
 }
 module.exports = Color;
